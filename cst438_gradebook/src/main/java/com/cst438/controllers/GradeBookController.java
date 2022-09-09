@@ -1,9 +1,13 @@
 package com.cst438.controllers;
 
 import java.util.ArrayList;
+import java.sql.Date;
 import java.util.List;
+import java.text.SimpleDateFormat; 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -11,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -42,6 +47,31 @@ public class GradeBookController {
 	
 	@Autowired
 	RegistrationService registrationService;
+	
+	@PostMapping("/addAssignment/{name}/{date}")
+   @Transactional
+   public String addAssignment(@PathVariable String name,@PathVariable String date) {
+	   String x = name + " " + date;
+      System.out.println(x);
+      
+      //YYYY-MM-DD
+      Date formattedDate=java.sql.Date.valueOf(date);
+      Assignment assign = new Assignment();
+      assign.setName(name);
+      assign.setDueDate(formattedDate);
+      assignmentRepository.save(assign);
+     
+      return x;
+   }
+	
+	@DeleteMapping("/deleteAssignment/{name}")
+   @Transactional
+   public String deleteAssignment(@PathVariable String name) {
+      Assignment x = assignmentRepository.deleteAssignment(name);
+      assignmentRepository.delete(x);
+     
+      return "Successfully deleted";
+   }
 	
 	// get assignments for an instructor that need grading
 	@GetMapping("/gradebook")
