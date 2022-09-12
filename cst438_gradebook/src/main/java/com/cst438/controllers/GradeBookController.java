@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -48,30 +49,42 @@ public class GradeBookController {
 	@Autowired
 	RegistrationService registrationService;
 	
+	// Add assignments to assignment table with name and due date
 	@PostMapping("/addAssignment/{name}/{date}")
    @Transactional
    public String addAssignment(@PathVariable String name,@PathVariable String date) {
-	   String x = name + " " + date;
-      System.out.println(x);
-      
-      //YYYY-MM-DD
+      //YYYY-MM-DD - change to Date type
       Date formattedDate=java.sql.Date.valueOf(date);
       Assignment assign = new Assignment();
       assign.setName(name);
       assign.setDueDate(formattedDate);
+      assign.setNeedsGrading(1);
       assignmentRepository.save(assign);
      
-      return x;
+      return "Successfully added";
    }
 	
+	//Delete assignment by name
 	@DeleteMapping("/deleteAssignment/{name}")
    @Transactional
    public String deleteAssignment(@PathVariable String name) {
-      Assignment x = assignmentRepository.deleteAssignment(name);
-      assignmentRepository.delete(x);
+	   //Return selected assignment by name
+	   Assignment assign = assignmentRepository.deleteAssignment(name);
+	   
+	   //Delete assignment
+      assignmentRepository.delete(assign);
      
       return "Successfully deleted";
    }
+	
+	//Update assignment name
+	@PatchMapping("/changeAssignName/{name}/{update}")
+	@Transactional
+	public String changeAssignName(@PathVariable String name, @PathVariable String update) {
+	   assignmentRepository.changeAssignName(name, update);
+	   
+	   return name;
+	}
 	
 	// get assignments for an instructor that need grading
 	@GetMapping("/gradebook")
