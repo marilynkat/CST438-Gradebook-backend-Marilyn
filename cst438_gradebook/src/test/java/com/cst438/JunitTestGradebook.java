@@ -75,6 +75,42 @@ public class JunitTestGradebook {
 	private MockMvc mvc;
 
 	@Test
+   public void addAssignment() throws Exception {
+
+      MockHttpServletResponse response;
+
+      response = mvc.perform(MockMvcRequestBuilders.post("/addAssignment/" + TEST_STUDENT_NAME + "/2022-01-01").accept(MediaType.APPLICATION_JSON))
+            .andReturn().getResponse();
+      
+      assertEquals(200, response.getStatus());
+      
+	}
+	
+	@Test
+   public void removeAssignment() throws Exception {
+
+      MockHttpServletResponse response;
+
+      response = mvc.perform(MockMvcRequestBuilders.delete("/deleteAssignment/name").accept(MediaType.APPLICATION_JSON))
+            .andReturn().getResponse();
+      
+      assertEquals(200, response.getStatus());
+      
+   }
+	
+	@Test
+   public void editAssignment() throws Exception {
+
+      MockHttpServletResponse response;
+
+      response = mvc.perform(MockMvcRequestBuilders.patch("/changeAssignName/name/name2").accept(MediaType.APPLICATION_JSON))
+            .andReturn().getResponse();
+      
+      assertEquals(200, response.getStatus());
+      
+   }
+	
+	@Test
 	public void gradeAssignment() throws Exception {
 
 		MockHttpServletResponse response;
