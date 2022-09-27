@@ -3,6 +3,7 @@ package com.cst438.controllers;
 import java.util.ArrayList;
 import java.sql.Date;
 import java.util.List;
+import java.util.Optional;
 import java.text.SimpleDateFormat; 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,14 +51,17 @@ public class GradeBookController {
 	RegistrationService registrationService;
 	
 	// Add assignments to assignment table with name and due date
-	@PostMapping("/addAssignment/{name}/{date}")
+	@PostMapping("/addAssignment/{courseName}/{name}/{date}")
    @Transactional
-   public String addAssignment(@PathVariable String name,@PathVariable String date) {
-      //YYYY-MM-DD - change to Date type
+   public String addAssignment(@PathVariable String courseName,@PathVariable String name,
+         @PathVariable String date) {
+	   Course course = courseRepository.findByName(courseName);
+	   //YYYY-MM-DD - change to Date type
       Date formattedDate=java.sql.Date.valueOf(date);
       Assignment assign = new Assignment();
       assign.setName(name);
       assign.setDueDate(formattedDate);
+      assign.setCourse(course);
       assign.setNeedsGrading(1);
       assignmentRepository.save(assign);
      
